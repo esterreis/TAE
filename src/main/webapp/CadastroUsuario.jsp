@@ -22,67 +22,106 @@
                     <h3 class="ui dividing header">Cadastro de Usuário</h3>
                     <div class="ui required field">
                         <label>Nome Completo:</label>
-                        <input type="text" maxlength="80" name="nome" id="nome"/> 
+                        <input type="text" data-validate="nome" maxlength="80" name="nome" id="nome"/> 
                     </div>
                     <div class="ui two fields">
                         <div class="ui required field">
                             <label>Email:</label>
-                           <input type="text" maxlength="80" name="login" id="nome"/> 
+                            <input type="text" maxlength="80" data-validate="email" name="login" id="nome"/> 
                         </div>
-                         <div class="ui required field">
+                        <div class="ui required field">
                             <label>Senha</label>
-                            <input type="password" maxlength="30" name="senha" id="nome"/> 
+                            <input type="password" maxlength="30" data-validate="senha" name="senha" id="nome"/> 
                         </div>
-                        
+
                     </div>
-                    <button type="submit" class="ui primary button" id="salvar">SALVAR</button>
+                    <button type="submit" id="salvar" class="ui primary button" id="salvar">SALVAR</button>
                     <button type="reset" class="ui negative button" id="cancelar">CANCELAR</button>
                 </form>
-            
-        </div>
+
+                
+
+            </div>
             <%!
-               
-               private Usuario usuario; 
-               
-               UsuarioDao dao = CdiUtil.getUsuarioDaoInstance();
-                public boolean validaDados(HttpServletRequest request){
-                    
-                   String nome  = request.getParameter("nome");
-                   String email = request.getParameter("login");
-                   String senha = request.getParameter("senha");
-                   
-                   return  nome!=null && !nome.trim().isEmpty() && email!=null && !email.trim().isEmpty() && senha!=null && !senha.trim().isEmpty();
+                private Usuario usuario;
+
+                UsuarioDao dao = CdiUtil.getUsuarioDaoInstance();
+
+                public boolean validaDados(HttpServletRequest request) {
+
+                    String nome = request.getParameter("nome");
+                    String email = request.getParameter("login");
+                    String senha = request.getParameter("senha");
+
+                    return nome != null && !nome.trim().isEmpty() && email != null && !email.trim().isEmpty() && senha != null && !senha.trim().isEmpty();
 
                 }
 
-                public long salvar(HttpServletRequest request){
+                public long salvar(HttpServletRequest request) {
 
-                    if(validaDados(request)){
-                  
-                      usuario = new Usuario();
-                      usuario.setEmail(request.getParameter("login"));
-                      usuario.setNome(request.getParameter("nome"));
-                      usuario.setPassword(request.getParameter("senha"));
-                     
-                      
-                      dao.salvar(usuario);
-                      return  usuario.getId();
-                      
+                    if (validaDados(request)) {
 
-                  }
-return -1;
+                        usuario = new Usuario();
+                        usuario.setEmail(request.getParameter("login"));
+                        usuario.setNome(request.getParameter("nome"));
+                        usuario.setPassword(request.getParameter("senha"));
+
+                        dao.salvar(usuario);
+                        return usuario.getId();
+
+                    }
+                    return -1;
                 }
             %>
             <%
-               
-                 salvar(request);
-                  for (Usuario elem : dao.listar()) {
-                            out.print(elem.getNome());
-                            out.print(elem.getId());
-                      }
-                  
-                  
+
+                salvar(request);
+                for (Usuario elem : dao.listar()) {
+                    out.print(elem.getNome());
+                    out.print(elem.getId());
+                }
+
+
             %>
-        
+              <script>
+
+                    $('.ui.form')
+                            .form({
+                                email:{
+                                    identifier: 'email',
+                                    rules: [
+                                        {
+                                            type: 'email',
+                                            prompt: 'Informe um email'
+                                        }
+                                    ]
+                                },
+                                 senha:{
+                                    identifier: 'senha',
+                                    rules: [
+                                        {
+                                            type: 'empty',
+                                            prompt: 'Informação obrigatória'
+                                        }
+                                    ]
+                                },
+                                nome:{
+                                    identifier: 'nome',
+                                    rules: [
+                                        {
+                                            type: 'empty',
+                                            prompt: 'Informação obrigatória'
+                                        }
+                                    ]
+                                }
+                            }, {
+                                inline: true,
+                                on: 'blur',
+                                onSuccess: function () {
+                                    //console.log('on success');
+                                    return false;
+                                }
+                            });
+                </script>
     </body>
 </html>
